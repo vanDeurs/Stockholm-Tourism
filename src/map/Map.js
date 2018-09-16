@@ -4,8 +4,13 @@ import googleApiKey from '.././config/keys';
 import PropTypes from 'prop-types';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import List from '../list/list';
-import Modal from 'react-responsive-modal';
-// Component containing the google maps
+import Modal from 'react-modal';
+
+// Bind modal to appElement (http://reactcommunity.org/react-modal/accessibility/)
+// For screen readers
+Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.4)';
+Modal.setAppElement('#root');
+
 class MapContainer extends Component {
   constructor(props) {
     super(props);
@@ -135,7 +140,15 @@ class MapContainer extends Component {
 			value,
 		} = this.state;
 		return (
-			<Modal open={inputModalOpen} onClose={this.onCloseInputModal} center>
+		<div>
+			<button onClick={this.openModal}>Open Modal</button>
+			<Modal
+				isOpen={inputModalOpen}
+				// onAfterOpen={this.afterOpenModal}
+				onRequestClose={this.onCloseInputModal}
+				style={styles.modalStyles}
+				contentLabel="Spara plats"
+			>
 				<h2>{address}</h2>
 				<form onSubmit={this.onSubmitModalForm}>
 					<label>
@@ -146,7 +159,8 @@ class MapContainer extends Component {
 					</label>
 					<input type="submit" value="Spara" />
 				</form>
-		</Modal>
+			</Modal>
+		</div>
 		);
 	}
 
@@ -176,6 +190,16 @@ const styles = {
 		position: 'absolute',
 		top: '7%',
 		left: 10,
+	},
+	modalStyles: {
+		content: {
+			top: '30%',
+			left: '30%',
+			right: 'auto',
+			bottom: 'auto',
+			marginRight: '-30%',
+			transform: 'translate(-50%, -50%)',
+		},
 	},
 };
 

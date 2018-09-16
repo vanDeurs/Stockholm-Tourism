@@ -3,6 +3,7 @@ import './Map.css';
 import googleApiKey from '.././config/keys';
 import PropTypes from 'prop-types';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import List from '../list/list';
 // Component containing the google maps
 class MapContainer extends Component {
   constructor(props) {
@@ -20,6 +21,21 @@ class MapContainer extends Component {
 		this.loadMap();
 	}
 
+	loadList = () => {
+		this.setState({
+			markers: [
+				...this.state.markers,
+			],
+		});
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
+		if (nextProps !== nextState) {
+			return true;
+		}
+	}
+
+	// Load in the google maps
 	loadMap = () => {
 		if (this.props && this.props.google) {
 			// If google is available
@@ -102,10 +118,26 @@ class MapContainer extends Component {
 		return (
 			<div>
 				{this.loadMap()}
+				<div style={styles.listWrapper}>
+					<List locations={this.state.markers}
+						pickLocation={(address) => console.log('Hello: ' + address )}
+					/>
+				</div>
 			</div>
     );
   };
 }
+
+const styles = {
+	wrapper: {
+
+	},
+	listWrapper: {
+		position: 'absolute',
+		top: '7%',
+		left: 10,
+	},
+};
 
 export default GoogleApiWrapper({
 	apiKey: (googleApiKey)

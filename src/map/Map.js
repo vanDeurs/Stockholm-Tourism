@@ -8,7 +8,6 @@ import Modal from 'react-modal';
 
 // Bind modal to appElement (http://reactcommunity.org/react-modal/accessibility/)
 // For screen readers
-Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.4)';
 Modal.setAppElement('#root');
 
 class MapContainer extends Component {
@@ -130,6 +129,7 @@ class MapContainer extends Component {
 				},
 				...locations,
 			],
+			value: '',
 			inputModalOpen: false,
 		});
 	}
@@ -171,10 +171,13 @@ class MapContainer extends Component {
 			<div>
 				{this.loadMap()}
 				<div style={styles.listWrapper}>
-					<List locations={this.state.locations}
-						pickLocation={(address) => console.log('Hello: ' + address )}
-						deleteLocation={(key) => this.deleteLocation(key)}
-					/>
+				{this.state.locations.length > 0
+					? <List locations={this.state.locations}
+							pickLocation={(address) => console.log('Hello: ' + address )}
+							deleteLocation={(key) => this.deleteLocation(key)}
+						/>
+					: <h2>Du har inga sparade platser.</h2>
+				}
 				</div>
 					{this.inputModal()}
 			</div>
@@ -182,10 +185,8 @@ class MapContainer extends Component {
   };
 }
 
+Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.4)';
 const styles = {
-	wrapper: {
-
-	},
 	listWrapper: {
 		position: 'absolute',
 		top: '7%',

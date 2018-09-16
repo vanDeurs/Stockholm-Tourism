@@ -11,7 +11,7 @@ class MapContainer extends Component {
     this.state = {
       showingInfoWindow: false,
 			activeMarker: {},
-			markers: [],
+			locations: [],
 			selectedPlace: {},
     };
 	}
@@ -23,8 +23,8 @@ class MapContainer extends Component {
 
 	loadList = () => {
 		this.setState({
-			markers: [
-				...this.state.markers,
+			locations: [
+				...this.state.locations,
 			],
 		});
 	}
@@ -88,18 +88,18 @@ class MapContainer extends Component {
 	// 	}
 	// };
 	onMapClicked = (event) => {
-		const {markers} = this.state;
+		const {locations} = this.state;
 		this.setState({
-			markers: [
+			locations: [
 				{
 					position: event,
 					key: Date.now(),
 					defaultAnimation: 2,
 				},
-				...markers,
+				...locations,
 			],
 		});
-		console.log(this.state.markers);
+		console.log(this.state.locations);
 	}
 	// Triggers when the user closes the info window
 	InfoWindowHasOpened = () => {
@@ -113,14 +113,23 @@ class MapContainer extends Component {
 			showingInfoWindow: false,
 		});
 	}
+	deleteLocation = (key) => {
+		let locations = this.state.locations.filter((locations) => {
+			return locations.key !== key;
+		});
+		this.setState({
+			locations,
+		});
+	}
 	// We return the loadMap func
   render() {
 		return (
 			<div>
 				{this.loadMap()}
 				<div style={styles.listWrapper}>
-					<List locations={this.state.markers}
+					<List locations={this.state.locations}
 						pickLocation={(address) => console.log('Hello: ' + address )}
+						deleteLocation={(key) => this.deleteLocation(key)}
 					/>
 				</div>
 			</div>

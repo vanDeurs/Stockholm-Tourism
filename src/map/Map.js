@@ -10,6 +10,7 @@ class MapContainer extends Component {
     this.state = {
       showingInfoWindow: false,
 			activeMarker: {},
+			markers: [],
 			selectedPlace: {},
     };
 	}
@@ -24,13 +25,12 @@ class MapContainer extends Component {
 			// If google is available
 			return (
 				<Map google={this.props.google} zoom={this.props.zoom}
-					onClick={this.mapClicked}
-					// Center of map
+					onClick={this.onMapClicked}
 					initialCenter={this.props.initialCenter}
 					>
 					<Marker onClick={this.onMarkerClick}
-						name={'Current location'} />
-
+						name={'Current location'}
+					/>
 					<InfoWindow
 						onOpen={this.InfoWindowHasOpened}
 						onClose={this.infoWindowHasClosed}
@@ -47,27 +47,44 @@ class MapContainer extends Component {
 		}
 	}
 
+	handleClick(event) {
+		let lat = event.latitude.lat();
+		let lng = event.longitude.lng();
+		console.log(lat, lng);
+	}
+
 	onMarkerClick = (props, marker, e) => {
+		console.log(props);
     this.setState({
       selectedPlace: props,
       activeMarker: marker,
       showingInfoWindow: true,
 		});
-		console.log(props);
 	}
-	// Triggers when the user clicks on the map
-  onMapClicked = (props) => {
-    if (this.state.showingInfoWindow) {
-      this.setState({
-        showingInfoWindow: false,
-        activeMarker: null,
-      }, () => {
-				this.setState({
-					showingInfoWindow: true,
-				});
-			});
-    }
-	};
+	// // Triggers when the user clicks on the map
+  // onMapClicked = (props) => {
+	// 	console.log(props);
+  //   if (this.state.showingInfoWindow) {
+  //     this.setState({
+  //       showingInfoWindow: false,
+	// 			activeMarker: null,
+	// 		});
+	// 	}
+	// };
+	onMapClicked = (event) => {
+		const {markers} = this.state;
+		this.setState({
+			markers: [
+				{
+					position: event,
+					key: Date.now(),
+					defaultAnimation: 2,
+				},
+				...markers,
+			],
+		});
+		console.log(this.state.markers);
+	}
 	// Triggers when the user closes the info window
 	InfoWindowHasOpened = () => {
 		this.setState({
@@ -94,6 +111,7 @@ export default GoogleApiWrapper({
 	apiKey: (googleApiKey)
 })(MapContainer);
 
+// Proptypes
 MapContainer.propTypes = {
 	google: PropTypes.object,
   zoom: PropTypes.number,

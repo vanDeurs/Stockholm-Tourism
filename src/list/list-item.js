@@ -1,31 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import './list-item.css';
 
 export const ListItem = (props) => {
 	return (
-		<div
-			style={{
-				minHeight: 45,
-				paddingVertical: 5,
-				justifyContent: 'center',
-				width: '100%',
-				borderBottomWidth: 1,
-			}}
-			onClick={() => props.pickLocation(props.fullAddress)}
-		>
-			<div style={{flexDirection: 'row', justifyContent: 'flex-start'}} >
-				<div style={{width: '10%', justifyContent: 'center', alignItems: 'center'}}>
-					<h1> - </h1>
-				</div>
+		<div className="list-item-container">
+			<div className="list-item-icon-wrapper">
+				<h1> - </h1>
+			</div>
 
-				<div style={{justifyContent: 'space-around', alignItems: 'flex-start', flex: 1}}>
-					<p style={styles.nameText}>{props.name}</p>
-				</div>
-				<div style={{justifyContent: 'center', alignItems: 'flex-start', width: '20%'}}>
-					<button onClick={() => props.deleteLocation()}>
-						<p style={styles.deleteText}>Ta bort</p>
-					</button>
-				</div>
+		<div className="list-item-button-wrapper">
+			<button className="list-item-pick-button"
+				onClick={() => props.pickLocation()}>
+				<p style={styles.nameText}>{props.name}</p>
+			</button>
+		</div>
+			<div className="list-item-button-wrapper">
+				<button onClick={() => props.deleteLocation()}>
+					<p style={styles.deleteText}>Ta bort</p>
+				</button>
 			</div>
 		</div>
     );
@@ -55,4 +48,17 @@ const styles = {
         display: 'flex',
         flexWrap: 'wrap',
     },
+};
+
+// Proptypes
+ListItem.propTypes = {
+	name: PropTypes.string.isRequired,
+	pickLocation: PropTypes.func.isRequired,
+	deleteLocation: PropTypes.func.isRequired,
+};
+
+ListItem.defaultProps = {
+	name: 'name',
+	pickLocation: () => null,
+	deleteLocation: () => null,
 };

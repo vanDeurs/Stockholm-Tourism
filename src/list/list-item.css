@@ -1,0 +1,23 @@
+.list-item-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 300px;
+    border-bottom: 1px solid lightgray;
+}
+
+.list-item-icon-wrapper {
+    display: flex;
+    flex: 2;
+    justify-content: center;
+    align-items: center;
+}
+
+.list-item-button-wrapper {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+

@@ -140,7 +140,9 @@ class MapContainer extends Component {
 				<form onSubmit={this.onSubmitModalForm}>
 					<label>
 						Name:
-						<input type="text" name="name" value={value} onChange={this.handleChange} />
+						<input type="text"
+							name="name" value={value}
+							onChange={this.handleChange} />
 					</label>
 					<input type="submit" value="Spara" />
 				</form>

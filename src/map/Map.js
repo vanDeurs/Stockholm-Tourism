@@ -4,6 +4,7 @@ import googleApiKey from '.././config/keys';
 import PropTypes from 'prop-types';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import List from '../list/list';
+import Modal from 'react-responsive-modal';
 // Component containing the google maps
 class MapContainer extends Component {
   constructor(props) {
@@ -13,20 +14,15 @@ class MapContainer extends Component {
 			activeMarker: {},
 			locations: [],
 			selectedPlace: {},
+
+			inputModalOpen: false,
+			value: '',
     };
 	}
 
 	componentDidMount() {
 		// We load the map on mount
 		this.loadMap();
-	}
-
-	loadList = () => {
-		this.setState({
-			locations: [
-				...this.state.locations,
-			],
-		});
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -63,12 +59,6 @@ class MapContainer extends Component {
 		}
 	}
 
-	handleClick(event) {
-		let lat = event.latitude.lat();
-		let lng = event.longitude.lng();
-		console.log(lat, lng);
-	}
-
 	onMarkerClick = (props, marker, e) => {
 		console.log(props);
     this.setState({
@@ -87,19 +77,9 @@ class MapContainer extends Component {
 	// 		});
 	// 	}
 	// };
-	onMapClicked = (event) => {
-		const {locations} = this.state;
-		this.setState({
-			locations: [
-				{
-					position: event,
-					key: Date.now(),
-					defaultAnimation: 2,
-				},
-				...locations,
-			],
-		});
-		console.log(this.state.locations);
+	onMapClicked = (mapProps, map, clickEvent) => {
+		console.log(mapProps);
+		this.setState({inputModalOpen: true});
 	}
 	// Triggers when the user closes the info window
 	InfoWindowHasOpened = () => {
@@ -121,6 +101,54 @@ class MapContainer extends Component {
 			locations,
 		});
 	}
+
+	onOpenInputModal = () => {
+		this.setState({inputModalOpen: true});
+	}
+	onCloseInputModal = () => {
+		this.setState({inputModalOpen: false});
+	}
+	handleChange = (event) => {
+		this.setState({value: event.target.value});
+		// console.log(event.target.value);
+	}
+	onSubmitModalForm = (event) => {
+		event.preventDefault();
+		const {locations, value} = this.state;
+		this.setState({
+			locations: [
+				{
+					position: event,
+					key: Date.now(),
+					defaultAnimation: 2,
+					name: value,
+				},
+				...locations,
+			],
+			inputModalOpen: false,
+		});
+	}
+
+	inputModal = (address) => {
+		const {
+			inputModalOpen,
+			value,
+		} = this.state;
+		return (
+			<Modal open={inputModalOpen} onClose={this.onCloseInputModal} center>
+				<h2>{address}</h2>
+				<form onSubmit={this.onSubmitModalForm}>
+					<label>
+						Name:
+						<input type="text" name="name" value={value} onChange={this.handleChange} />
+					</label>
+					<input type="submit" value="Spara" />
+				</form>
+		</Modal>
+		);
+	}
+
+
 	// We return the loadMap func
   render() {
 		return (
@@ -132,6 +160,7 @@ class MapContainer extends Component {
 						deleteLocation={(key) => this.deleteLocation(key)}
 					/>
 				</div>
+					{this.inputModal()}
 			</div>
     );
   };

@@ -11,7 +11,7 @@ class List extends Component {
 			let name = location.name;
       return (
         <ListItem
-          name={name ? name : 'Name placeholder'}
+          name={name ? name : 'Name'}
 					pickLocation={() => this.props.pickLocation(addressPosition)}
 					deleteLocation={() => this.props.deleteLocation(key)}
 					key={key}

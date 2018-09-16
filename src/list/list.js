@@ -5,20 +5,24 @@ import {ListItem} from './list-item';
 
 class List extends Component {
 	// Render each saved location in the list-item component
-  renderItem(data) {
-      let addressPosition = data.position;
+  renderLocation(location) {
+			let addressPosition = location.position;
+			let key = location.key;
+			let name = location.name;
       return (
         <ListItem
-          name={data.name ? data.name : 'Name placeholder'}
-          pickLocation={() => this.props.pickLocation(addressPosition ? addressPosition : null)}
+          name={name ? name : 'Name placeholder'}
+					pickLocation={() => this.props.pickLocation(addressPosition)}
+					deleteLocation={() => this.props.deleteLocation(key)}
+					key={key}
         />
       );
 	}
 	// Render the full list of saved locations
-  renderResultList(items) {
+  renderResultList(locations) {
 		return (
 			<div>
-				{this.renderItem(items)}
+				{locations.map((location) => this.renderLocation(location))}
 			</div>
 		);
   }

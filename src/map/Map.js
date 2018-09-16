@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './Map.css';
 import googleApiKey from '.././config/keys';
+import PropTypes from 'prop-types';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
-
 // Component containing the google maps
 class MapContainer extends Component {
   constructor(props) {
@@ -12,6 +12,39 @@ class MapContainer extends Component {
 			activeMarker: {},
 			selectedPlace: {},
     };
+	}
+
+	componentDidMount() {
+		// We load the map on mount
+		this.loadMap();
+	}
+
+	loadMap = () => {
+		if (this.props && this.props.google) {
+			// If google is available
+			return (
+				<Map google={this.props.google} zoom={this.props.zoom}
+					onClick={this.mapClicked}
+					// Center of map
+					initialCenter={this.props.initialCenter}
+					>
+					<Marker onClick={this.onMarkerClick}
+						name={'Current location'} />
+
+					<InfoWindow
+						onOpen={this.InfoWindowHasOpened}
+						onClose={this.infoWindowHasClosed}
+						marker={this.state.activeMarker}
+						visible={this.state.showingInfoWindow}>
+							<div>
+								<h1>{this.state.selectedPlace.name}</h1>
+							</div>
+					</InfoWindow>
+				</Map>
+			);
+		} else {
+			return alert('Google maps is not available at this moment.');
+		}
 	}
 
 	onMarkerClick = (props, marker, e) => {
@@ -47,37 +80,31 @@ class MapContainer extends Component {
 			showingInfoWindow: false,
 		});
 	}
-	// We init google maps below
+	// We return the loadMap func
   render() {
-		let stockholmLongitude = 18.063240;
-		let stockholmLatitude = 59.334591;
 		return (
-			// Actual map
-			<Map google={this.props.google} zoom={11}
-				onClick={this.mapClicked}
-				// Center of map
-				initialCenter={{
-						lat: stockholmLatitude,
-						lng: stockholmLongitude,
-					}}
-				>
-				<Marker onClick={this.onMarkerClick}
-          name={'Current location'} />
-
-        <InfoWindow
-				  onOpen={this.InfoWindowHasOpened}
-				  onClose={this.infoWindowHasClosed}
-          marker={this.state.activeMarker}
-          visible={this.state.showingInfoWindow}>
-            <div>
-              <h1>{this.state.selectedPlace.name}</h1>
-            </div>
-        </InfoWindow>
-      </Map>
+			<div>
+				{this.loadMap()}
+			</div>
     );
   };
 }
 
 export default GoogleApiWrapper({
-  apiKey: (googleApiKey)
+	apiKey: (googleApiKey)
 })(MapContainer);
+
+MapContainer.propTypes = {
+	google: PropTypes.object,
+  zoom: PropTypes.number,
+  initialCenter: PropTypes.object,
+};
+
+MapContainer.defaultProps = {
+  zoom: 11,
+  // Stockholm
+  initialCenter: {
+    lat: 59.334591,
+    lng: 18.063240,
+  },
+};

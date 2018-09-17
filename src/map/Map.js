@@ -65,12 +65,12 @@ class MapContainer extends Component {
 
 	onMarkerClick = (props, marker, e) => {
 		console.log(props);
-    this.setState({
-      selectedPlace: props,
-      activeMarker: marker,
-      showingInfoWindow: true,
-		});
-	}
+		this.setState({
+		selectedPlace: props,
+		activeMarker: marker,
+		showingInfoWindow: true,
+			});
+		}
 	// // Triggers when the user clicks on the map
   // onMapClicked = (props) => {
 	// 	console.log(props);
@@ -113,7 +113,7 @@ class MapContainer extends Component {
 		this.setState({inputModalOpen: false});
 	}
 	handleChange = (event) => {
-		this.setState({value: event.target.value});
+		this.setState({[event.target.name]: event.target.value});
 		// console.log(event.target.value);
 	}
 	onSubmitModalForm = (event) => {
@@ -141,7 +141,6 @@ class MapContainer extends Component {
 		} = this.state;
 		return (
 		<div>
-			<button onClick={this.openModal}>Open Modal</button>
 			<Modal
 				isOpen={inputModalOpen}
 				// onAfterOpen={this.afterOpenModal}
@@ -154,7 +153,7 @@ class MapContainer extends Component {
 					<label>
 						Name:
 						<input type="text"
-							name="name" value={value}
+							name="value" value={value}
 							onChange={this.handleChange} />
 					</label>
 					<input type="submit" value="Spara" />
@@ -171,15 +170,29 @@ class MapContainer extends Component {
 			<div>
 				{this.loadMap()}
 				<div style={styles.listWrapper}>
-				{this.state.locations.length > 0
-					? <List locations={this.state.locations}
+					<div>
+						<div>
+							<form className="search-input-wrapper">
+								<input type="text"
+									name="search"
+									value={this.state.searchValue}
+									onChange={this.handleChange}
+									className="search-input"
+									placeholder="Sök efter sparad plats"
+									autoComplete="false"
+									autoCorrect="false"
+								>
+								</input>
+								{/* <input type="submit" value="Spara" /> */}
+							</form>
+						</div>
+						<List locations={this.state.locations}
 							pickLocation={(address) => console.log('Hello: ' + address )}
 							deleteLocation={(key) => this.deleteLocation(key)}
 						/>
-					: <h2>Du har inga sparade platser.</h2>
-				}
+					</div>
 				</div>
-					{this.inputModal()}
+				{this.inputModal()}
 			</div>
     );
   };
@@ -199,7 +212,7 @@ const styles = {
 			right: 'auto',
 			bottom: 'auto',
 			marginRight: '-30%',
-			transform: 'translate(-50%, -50%)',
+			transform: 'translate(-70%, -30%)',
 		},
 	},
 };

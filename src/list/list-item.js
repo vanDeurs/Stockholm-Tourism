@@ -1,24 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './list-item.css';
+import {FaBeer, FaStar} from 'react-icons/fa';
 
 export const ListItem = (props) => {
 	return (
 		<div className="list-item-container">
 			<div className="list-item-icon-wrapper">
-				<h1> - </h1>
+            <i className="location-icon"><FaStar /></i>
 			</div>
 
 		<div className="list-item-button-wrapper">
-			<button className="list-item-pick-button"
+			<div className="list-item-pick-button"
 				onClick={() => props.pickLocation()}>
-				<p style={styles.nameText}>{props.name}</p>
-			</button>
+				<p className="place-name">{props.name}</p>
+			</div>
 		</div>
 			<div className="list-item-button-wrapper">
-				<button onClick={() => props.deleteLocation()}>
-					<p style={styles.deleteText}>Ta bort</p>
-				</button>
+				<div className="delete-button"onClick={() => props.deleteLocation()}>
+					<p className="delete-button-text">Ta bort</p>
+				</div>
 			</div>
 		</div>
     );

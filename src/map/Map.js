@@ -170,7 +170,7 @@ class MapContainer extends Component {
 			<div>
 				{this.loadMap()}
 				<div style={styles.listWrapper}>
-					<div>
+					<div className="items-search-wrapper">
 						<div>
 							<form className="search-input-wrapper">
 								<input type="text"

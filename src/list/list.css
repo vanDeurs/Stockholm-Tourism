@@ -1,12 +1,13 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
 .locations-container {
     /* border: 2px solid green; */
 }
 
 .list-container {
-    height: 100px;
-    /* background: white; */
-    width: 500px;
-    padding-top: 50px;
 }
 
 .no-saved-places {

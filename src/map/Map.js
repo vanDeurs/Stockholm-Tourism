@@ -5,23 +5,25 @@ import PropTypes from 'prop-types';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import List from '../list/list';
 import Modal from 'react-modal';
+import Filter from '../list/filter';
 
 // Bind modal to appElement (http://reactcommunity.org/react-modal/accessibility/)
 // For screen readers
 Modal.setAppElement('#root');
 
 class MapContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showingInfoWindow: false,
-			activeMarker: {},
-			locations: [],
-			selectedPlace: {},
+	constructor(props) {
+		super(props);
+		this.state = {
+			showingInfoWindow: false,
+				activeMarker: {},
+				locations: [],
+				selectedPlace: {},
 
-			inputModalOpen: false,
-			value: '',
-    };
+				inputModalOpen: false,
+				value: '',
+				filterString: '',
+        };
 	}
 
 	componentDidMount() {
@@ -149,9 +151,8 @@ class MapContainer extends Component {
 				contentLabel="Spara plats"
 			>
 				<h2>{address}</h2>
-				<form onSubmit={this.onSubmitModalForm}>
-					<label>
-						Name:
+				<form className="modal-form"onSubmit={this.onSubmitModalForm}>
+					<label> Name:
 						<input type="text"
 							name="value" value={value}
 							onChange={this.handleChange} />
@@ -165,28 +166,21 @@ class MapContainer extends Component {
 
 
 	// We return the loadMap func
-  render() {
+    render() {
+		let locationsToRender = this.state.locations
+			.filter((location) =>
+				location.name.toLowerCase().includes(
+				this.state.filterString.toLowerCase())
+			);
 		return (
 			<div>
 				{this.loadMap()}
 				<div style={styles.listWrapper}>
 					<div className="items-search-wrapper">
-						<div>
-							<form className="search-input-wrapper">
-								<input type="text"
-									name="search"
-									value={this.state.searchValue}
-									onChange={this.handleChange}
-									className="search-input"
-									placeholder="Sök efter sparad plats"
-									autoComplete="false"
-									autoCorrect="false"
-								>
-								</input>
-								{/* <input type="submit" value="Spara" /> */}
-							</form>
-						</div>
-						<List locations={this.state.locations}
+						<Filter onTextChange={(text) => {
+							this.setState({filterString: text});
+						}}/>
+						<List locations={locationsToRender}
 							pickLocation={(address) => console.log('Hello: ' + address )}
 							deleteLocation={(key) => this.deleteLocation(key)}
 						/>
@@ -194,8 +188,8 @@ class MapContainer extends Component {
 				</div>
 				{this.inputModal()}
 			</div>
-    );
-  };
+		);
+	};
 }
 
 Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.4)';
@@ -207,12 +201,18 @@ const styles = {
 	},
 	modalStyles: {
 		content: {
-			top: '30%',
-			left: '30%',
-			right: 'auto',
-			bottom: 'auto',
-			marginRight: '-30%',
-			transform: 'translate(-70%, -30%)',
+			top: '32.5%',
+			left: '32.5%',
+			right: '32.5',
+			bottom: '32.5%',
+			// marginRight: '-50%',
+			// transform: 'translate(-50%, -50%)',
+			width: '35%',
+			height: '35%',
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			borderRadius: 10,
 		},
 	},
 };

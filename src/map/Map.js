@@ -145,19 +145,19 @@ class MapContainer extends Component {
 		<div>
 			<Modal
 				isOpen={inputModalOpen}
-				// onAfterOpen={this.afterOpenModal}
 				onRequestClose={this.onCloseInputModal}
 				style={styles.modalStyles}
 				contentLabel="Spara plats"
 			>
-				<h2>{address}</h2>
-				<form className="modal-form"onSubmit={this.onSubmitModalForm}>
+				{/* <h2>{address}</h2> */}
+				<form className="modal-form" onSubmit={this.onSubmitModalForm}>
 					<label> Name:
 						<input type="text"
+							className="name-input"
 							name="value" value={value}
 							onChange={this.handleChange} />
 					</label>
-					<input type="submit" value="Spara" />
+					<input type="submit" className="save-button" value="Spara" />
 				</form>
 			</Modal>
 		</div>
@@ -201,14 +201,14 @@ const styles = {
 	},
 	modalStyles: {
 		content: {
-			top: '32.5%',
-			left: '32.5%',
-			right: '32.5',
-			bottom: '32.5%',
+			top: '42.5%',
+			bottom: '42.5%',
+			left: '37.5%',
+			right: '37.5',
 			// marginRight: '-50%',
 			// transform: 'translate(-50%, -50%)',
-			width: '35%',
-			height: '35%',
+			width: '25%',
+			height: '15%',
 			display: 'flex',
 			justifyContent: 'center',
 			alignItems: 'center',

@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './list-item.css';
-import {FaBeer, FaStar} from 'react-icons/fa';
+import {FaMapPin} from 'react-icons/fa';
 
 export const ListItem = (props) => {
 	return (
 		<div className="list-item-container">
 			<div className="list-item-icon-wrapper">
-            <i className="location-icon"><FaStar /></i>
+            <i className="location-icon"><FaMapPin /></i>
 			</div>
 
 		<div className="list-item-button-wrapper">
@@ -23,32 +23,6 @@ export const ListItem = (props) => {
 			</div>
 		</div>
     );
-};
-
-const styles = {
-    dropdownWrapper: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: '100%',
-        borderColor: '#b9b9b9',
-        backgroundColor: 'rgba(255,255,255,.8)',
-
-    },
-    list: {
-        width: '100%',
-        borderBottomWidth: 1,
-        borderColor: '#b9b9b9',
-    },
-    locationText: {
-        color: '#c3c3c3',
-    },
-    locationTextFull: {
-        fontSize: 13,
-        color: '#ccc',
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
 };
 
 // Proptypes

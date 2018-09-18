@@ -35,6 +35,7 @@
     color: darkgray;
     font-weight: 500;
     cursor: pointer;
+    text-align: start;
 }
 
 .delete-button {

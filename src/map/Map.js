@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import './Map.css';
 import googleApiKey from '.././config/keys';
+import GoogleMapReact from 'google-map-react';
 import PropTypes from 'prop-types';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import List from '../list/list';
 import Modal from 'react-modal';
-import Filter from '../list/filter';
+import Filter from '../filter/filter';
 
 // Bind modal to appElement (http://reactcommunity.org/react-modal/accessibility/)
 // For screen readers
@@ -23,6 +24,9 @@ class MapContainer extends Component {
 				inputModalOpen: false,
 				value: '',
 				filterString: '',
+
+				lat: '',
+				lng: '',
         };
 	}
 
@@ -31,34 +35,20 @@ class MapContainer extends Component {
 		this.loadMap();
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
-		if (nextProps !== nextState) {
-			return true;
-		}
-	}
-
 	// Load in the google maps
 	loadMap = () => {
 		if (this.props && this.props.google) {
 			// If google is available
 			return (
-				<Map google={this.props.google} zoom={this.props.zoom}
-					onClick={this.onMapClicked}
-					initialCenter={this.props.initialCenter}
-					>
-					<Marker onClick={this.onMarkerClick}
-						name={'Current location'}
-					/>
-					<InfoWindow
-						onOpen={this.InfoWindowHasOpened}
-						onClose={this.infoWindowHasClosed}
-						marker={this.state.activeMarker}
-						visible={this.state.showingInfoWindow}>
-							<div>
-								<h1>{this.state.selectedPlace.name}</h1>
-							</div>
-					</InfoWindow>
-				</Map>
+				<div style={{height: '100vh', width: '100%'}}>
+					<GoogleMapReact
+						bootstrapURLKeys={{key: googleApiKey}}
+						defaultCenter={this.props.initialCenter}
+						defaultZoom={this.props.zoom}
+						onClick={this.onMapClicked}
+						>
+					</GoogleMapReact>
+				</div>
 			);
 		} else {
 			return alert('Google maps is not available at this moment.');
@@ -73,19 +63,14 @@ class MapContainer extends Component {
 		showingInfoWindow: true,
 			});
 		}
-	// // Triggers when the user clicks on the map
-  // onMapClicked = (props) => {
-	// 	console.log(props);
-  //   if (this.state.showingInfoWindow) {
-  //     this.setState({
-  //       showingInfoWindow: false,
-	// 			activeMarker: null,
-	// 		});
-	// 	}
-	// };
-	onMapClicked = (mapProps, map, clickEvent) => {
-		console.log(mapProps);
-		this.setState({inputModalOpen: true});
+	// Triggers when the user clicks on the map
+	onMapClicked = ({lat, lng}) => this.openInputModal(lat, lng);
+	openInputModal = (lat, lng) => {
+		this.setState({
+			inputModalOpen: true,
+			lat,
+			lng,
+		});
 	}
 	// Triggers when the user closes the info window
 	InfoWindowHasOpened = () => {
@@ -108,15 +93,11 @@ class MapContainer extends Component {
 		});
 	}
 
-	onOpenInputModal = () => {
-		this.setState({inputModalOpen: true});
-	}
 	onCloseInputModal = () => {
 		this.setState({inputModalOpen: false});
 	}
 	handleChange = (event) => {
 		this.setState({[event.target.name]: event.target.value});
-		// console.log(event.target.value);
 	}
 	onSubmitModalForm = (event) => {
 		event.preventDefault();
@@ -124,10 +105,12 @@ class MapContainer extends Component {
 		this.setState({
 			locations: [
 				{
-					position: event,
 					key: Date.now(),
-					defaultAnimation: 2,
 					name: value,
+					position: {
+						lat: this.state.lat,
+						lng: this.state.lng,
+					},
 				},
 				...locations,
 			],
@@ -136,7 +119,8 @@ class MapContainer extends Component {
 		});
 	}
 
-	inputModal = (address) => {
+	// Modal for saving a location
+	inputModal = () => {
 		const {
 			inputModalOpen,
 			value,
@@ -165,8 +149,8 @@ class MapContainer extends Component {
 	}
 
 
-	// We return the loadMap func
     render() {
+		// We filter out the locations based on the search input
 		let locationsToRender = this.state.locations
 			.filter((location) =>
 				location.name.toLowerCase().includes(
@@ -174,14 +158,17 @@ class MapContainer extends Component {
 			);
 		return (
 			<div>
+				{/* We load the map */}
 				{this.loadMap()}
 				<div style={styles.listWrapper}>
 					<div className="items-search-wrapper">
+						{/* Search Field input */}
 						<Filter onTextChange={(text) => {
 							this.setState({filterString: text});
 						}}/>
+						{/* List of filtered locations  */}
 						<List locations={locationsToRender}
-							pickLocation={(address) => console.log('Hello: ' + address )}
+							pickLocation={(address) => console.log(address.lat + ' ' + address.lng)}
 							deleteLocation={(key) => this.deleteLocation(key)}
 						/>
 					</div>
@@ -220,6 +207,7 @@ const styles = {
 export default GoogleApiWrapper({
 	apiKey: (googleApiKey)
 })(MapContainer);
+// export default MapContainer;
 
 // Proptypes
 MapContainer.propTypes = {

@@ -36,8 +36,8 @@ class MapContainer extends Component {
         };
 	}
 
+	// Init map
 	componentDidMount() {
-		// Init map
 		this.loadMap();
 	}
 
@@ -49,18 +49,17 @@ class MapContainer extends Component {
 				<div style={{height: '100vh', width: '100%'}}>
 					<GoogleMapReact
 						bootstrapURLKeys={{key: googleApiKey}}
-						defaultCenter={this.props.initialCenter}
-						defaultZoom={this.state.zoom}
+						center={this.state.center}
 						zoom={this.state.zoom}
 						onClick={this.onMapClicked}
-						center={this.state.center}
 					>
 					{this.loadMarkers()}
 					{/* <InfoWindow
 						onOpen={this.InfoWindowHasOpened}
 						onClose={this.infoWindowHasClosed}
 						marker={{markers: this.state.locations}}
-						visible={this.state.showingInfoWindow}>
+						// visible={this.state.showingInfoWindow}>
+						visible={true}>
 							<div>
 								<h1>{this.state.locations.name}</h1>
 							</div>
@@ -82,8 +81,7 @@ class MapContainer extends Component {
 					lat={location.position.lat}
 					lng={location.position.lng}
 					key={i}
-					onClick={(text) => console.log(text)}
-					text={'Lat: ' + location.position.lat + 'Lng: ' + location.position.lng}
+					text={location.name}
 				/>;
 		});
 	}
@@ -190,8 +188,6 @@ class MapContainer extends Component {
 		const {
 			inputModalOpen,
 			value,
-			lat,
-			lng,
 		} = this.state;
 		return (
 		<div>
@@ -199,11 +195,10 @@ class MapContainer extends Component {
 				isOpen={inputModalOpen}
 				onRequestClose={this.onCloseInputModal}
 				style={styles.modalStyles}
-				contentLabel="Spara plats"
 			>
-				<p>{`Latitude: ${lat}\nLongitude: ${lng}`}</p>
 				<form className="modal-form" onSubmit={this.onSubmitModalForm}>
-					<label> Name:
+					<p>Spara plats</p>
+					<label> Namn:
 						<input type="text"
 							className="name-input"
 							name="value" value={value}

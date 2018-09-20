@@ -32,6 +32,7 @@ class MapContainer extends Component {
 					lat: 59.334591,
 					lng: 18.063240,
 				},
+				zoom: 11,
         };
 	}
 
@@ -49,7 +50,8 @@ class MapContainer extends Component {
 					<GoogleMapReact
 						bootstrapURLKeys={{key: googleApiKey}}
 						defaultCenter={this.props.initialCenter}
-						defaultZoom={this.props.zoom}
+						defaultZoom={this.state.zoom}
+						zoom={this.state.zoom}
 						onClick={this.onMapClicked}
 						center={this.state.center}
 					>
@@ -93,21 +95,23 @@ class MapContainer extends Component {
 				lat,
 				lng,
 			},
+			zoom: 13,
 		}, () => {
-			// Clears the center state so we can re-click on the
+			// Clears the center and zoom state so we can re-click on the
 			// same last location
-			this.clearCenter();
+			this.clearOptions();
 		});
 	}
 
 	// Triggers in a callback after the user has clicked on a
 	// location from the map.
-	clearCenter = () => {
+	clearOptions = () => {
 		this.setState({
 			center: {
 				lat: null,
 				lng: null,
 			},
+			zoom: null,
 		});
 	}
 
@@ -281,7 +285,6 @@ MapContainer.propTypes = {
 };
 
 MapContainer.defaultProps = {
-  zoom: 11,
   // Stockholm
   initialCenter: {
     lat: 59.334591,

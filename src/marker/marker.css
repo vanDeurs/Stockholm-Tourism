@@ -3,3 +3,9 @@
     color: darkred;
     /* padding: 5px; */
 }
+
+.infoBox {
+    background: red;
+    width: 200px;
+    height: 100px;
+}

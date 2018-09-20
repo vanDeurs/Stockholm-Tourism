@@ -54,22 +54,22 @@ class MapContainer extends Component {
 						onClick={this.onMapClicked}
 					>
 					{this.loadMarkers()}
-					{/* <InfoWindow
-						onOpen={this.InfoWindowHasOpened}
-						onClose={this.infoWindowHasClosed}
-						marker={{markers: this.state.locations}}
-						// visible={this.state.showingInfoWindow}>
-						visible={true}>
-							<div>
-								<h1>{this.state.locations.name}</h1>
-							</div>
-					</InfoWindow> */}
 				</GoogleMapReact>
 			</div>
 			);
 		} else {
 			return alert('Google maps is not available at this moment.');
 		}
+	}
+
+	openOrCloseInfoBox = () => {
+		this.state.showingInfoWindow
+			? this.setState({
+				showingInfoWindow: false,
+			})
+			: this.setState({
+				showingInfoWindow: true,
+			});
 	}
 
 	// We search through all the saved locations and return their markers
@@ -82,6 +82,8 @@ class MapContainer extends Component {
 					lng={location.position.lng}
 					key={i}
 					text={location.name}
+					infoBoxVisible={this.state.showingInfoWindow}
+					onClick={() => this.openOrCloseInfoBox()}
 				/>;
 		});
 	}

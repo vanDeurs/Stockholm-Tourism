@@ -3,12 +3,11 @@ import './Map.css';
 import googleApiKey from '.././config/keys';
 import GoogleMapReact from 'google-map-react';
 import PropTypes from 'prop-types';
-import {Map, InfoWindow, GoogleApiWrapper, Marker} from 'google-maps-react';
+import {GoogleApiWrapper} from 'google-maps-react';
 import List from '../list/list';
 import Modal from 'react-modal';
 import Filter from '../filter/filter';
-// import {Marker} from '../marker/marker';
-// Bind modal to appElement (http://reactcommunity.org/react-modal/accessibility/)
+
 // For screen readers
 Modal.setAppElement('#root');
 
@@ -55,7 +54,7 @@ class MapContainer extends Component {
 						yesIWantToUseGoogleMapApiInternals={true}
 						>
 						{this.renderMarkers()}
-					</GoogleMapReact>>
+					</GoogleMapReact>
 				</div>
 			);
 		} else {
@@ -69,17 +68,6 @@ class MapContainer extends Component {
 			maps,
 		});
 	}
-
-	openOrCloseInfoBox = () => {
-		this.state.showingInfoWindow
-			? this.setState({
-				showingInfoWindow: false,
-			})
-			: this.setState({
-				showingInfoWindow: true,
-			});
-	}
-
 	renderMarkers = () => {
 		const {map, maps, markers} = this.state;
 		if (!map || !maps) {
@@ -92,6 +80,7 @@ class MapContainer extends Component {
 
 	renderInfoWindow = (marker) => {
 		this.state.infoWindow.open(this.state.map, marker);
+		this.forceUpdate();
 	}
 
 	// Triggers when the user clicks on the location in the list
@@ -133,18 +122,6 @@ class MapContainer extends Component {
 			inputModalOpen: true,
 			lat,
 			lng,
-		});
-	}
-	// Triggers when the user opens the info window
-	openInfoWindow = () => {
-		this.setState({
-			showingInfoWindow: true,
-		});
-	}
-	// Triggers when the user closes the info window
-	closeInfoWindow = () => {
-		this.setState({
-			showingInfoWindow: false,
 		});
 	}
 	// Removes marker from the marker array in state. Triggers when the user
@@ -211,7 +188,7 @@ class MapContainer extends Component {
 			<Modal
 				isOpen={inputModalOpen}
 				onRequestClose={this.onCloseInputModal}
-				style={styles.modalStyles}
+				className="modal-content"
 			>
 				<form className="modal-form" onSubmit={this.onSubmitModalForm}>
 					<p>Spara plats</p>
@@ -219,7 +196,7 @@ class MapContainer extends Component {
 						<input type="text"
 							className="name-input"
 							name="value" value={value}
-							onChange={this.handleChange} 
+							onChange={this.handleChange}
 						/>
 					</label>
 					<input type="submit" className="save-button" value="Spara" />
@@ -228,7 +205,6 @@ class MapContainer extends Component {
 		</div>
 		);
 	}
-
 
     render() {
 		// We filter out the locations based on the search input
@@ -239,51 +215,29 @@ class MapContainer extends Component {
 			);
 		return (
 			<div>
-				{/* Google maps */}
+				<div className="information-box">
+					<p>Klicka på en plats på kartan för att spara den till din lista.
+						Där kan du även söka genom
+						dina sparade platser.
+					</p>
+				</div>
 				{this.loadMap()}
-				<div style={styles.listWrapper}>
 					<div className="items-search-wrapper">
-						{/* Search Field input */}
 						<Filter onTextChange={(text) => {
 							this.setState({filterString: text});
 						}}/>
-						{/* List of filtered locations  */}
 						<List locations={locationsToRender}
 							pickLocation={(address) => this.pickLocation(address)}
 							deleteLocation={(key, address) => this.deleteLocation(key, address)}
 						/>
 					</div>
-				</div>
 				{this.inputModal()}
 			</div>
 		);
 	};
 }
 
-Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.4)';
-const styles = {
-	listWrapper: {
-		position: 'absolute',
-		top: '7%',
-		left: 10,
-	},
-	modalStyles: {
-		content: {
-			top: '42.5%',
-			bottom: '42.5%',
-			left: '37.5%',
-			right: '37.5',
-			// marginRight: '-50%',
-			// transform: 'translate(-50%, -50%)',
-			width: '25%',
-			height: '15%',
-			display: 'flex',
-			justifyContent: 'center',
-			alignItems: 'center',
-			borderRadius: 10,
-		},
-	},
-};
+Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.5)';
 
 export default GoogleApiWrapper({
 	apiKey: (googleApiKey)

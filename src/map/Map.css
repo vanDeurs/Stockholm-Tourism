@@ -9,13 +9,33 @@
     justify-content: flex-start;
     align-items: flex-start;
     width: 350px;
+    position: absolute;
+    top: 3%;
+    left: 3%;
+}
+
+.modal-content {
+    top: 42.5%;
+    bottom: 42.5%;
+    left: 37.5%;
+    right: 37.5;
+    width: 25%;
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10;
+    background: white;
+    position: absolute;
+    border-radius: 10px;
+    
 }
 
 .modal-form {
     display: flex;
     /* border: 1px solid red; */
     width: 100%;
-    height: 95%;
+    height: 90%;
     justify-content: space-around;
     align-items: center;
     flex-direction: column;
@@ -63,6 +83,30 @@
     width: 100%;
     background: transparent;
     height: 35%;
-;}
+}
+
+.information-box {
+    position: absolute;
+    display: flex;
+    align-self: flex-end;
+    top: 0;
+    right: 0;
+    width: 20%;
+    height: 10%;
+    background: white;
+    z-index: 100;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.information-box p {
+    font-size: 14px;
+    line-height: 1.3;
+    text-align: center;
+
+}
 
 

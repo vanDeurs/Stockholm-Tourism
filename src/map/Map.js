@@ -16,11 +16,8 @@ class MapContainer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			showingInfoWindow: false,
-				// activeMarker: {},
-				locations: [],
+				showingInfoWindow: false,
 				markers: [],
-				// selectedPlace: {},
 
 				inputModalOpen: false,
 				value: '',
@@ -51,10 +48,10 @@ class MapContainer extends Component {
 						center={this.state.center}
 						zoom={this.state.zoom}
 						onClick={this.onMapClicked}
+						// Sets the map and maps instance in state,
+						// so we can more easily use it in other places
 						onGoogleApiLoaded={({map, maps}) => this.setMapState(map, maps)}
 						yesIWantToUseGoogleMapApiInternals={true}
-
-						
 						>
 						{this.renderMarkers()}
 					</GoogleMapReact>>
@@ -83,21 +80,13 @@ class MapContainer extends Component {
 	}
 
 	renderMarkers = () => {
-		const {map, maps, locations} = this.state;
+		const {map, maps, markers} = this.state;
 		if (!map || !maps) {
 			return;
 		}
-		let marker;
-		let markers = [];
-		for (let i = 0; i < locations.length; i++) {
-			marker = marker = new maps.Marker({
-				position: locations[i].position,
-				map,
-				// key: locations[i].key,
-			});
-			markers.push(marker);
-		}
-		return markers;
+		markers.map((marker) => {
+			return marker;
+		});
 	}
 
 	// Triggers when the user clicks on the location in the list
@@ -158,22 +147,23 @@ class MapContainer extends Component {
 			showingInfoWindow: false,
 		});
 	}
-	// Removed locaton from the location array. Triggers when the user
+	// Removes marker from the marker array in state. Triggers when the user
 	// clicks the delete button.
-	deleteLocation = (key, position) => {
-		console.log('Locations: ', this.state.locations);
-		let locations = this.state.locations.filter((locations) => {
-			return locations.key !== key;
+	deleteLocation = (key) => {
+		let markers = this.state.markers.filter((marker) => {
+			return marker.key !== key;
 		});
 		this.setState({
-			locations,
+			markers,
 		});
-		this.removeMarkerFromMap(position);
+		this.removeMarkerFromMap(key);
 	}
-	removeMarkerFromMap = (markerPosition) => {
-		for (let i = 0; i < 10; i++) {
-			if (this.state.markers[i].key === markerPosition) {
-				return;
+	// Removes the marker from the map
+	removeMarkerFromMap = (key) => {
+		const {markers} = this.state;
+		for (let i = 0; i < markers.length; i++) {
+			if (markers[i].key === key) {
+				markers[i].setMap(null);
 			}
 		}
 	}
@@ -188,19 +178,20 @@ class MapContainer extends Component {
 	// Triggers when the user saves the location in the modal
 	onSubmitModalForm = (event) => {
 		event.preventDefault();
-		const {locations, value, markers} = this.state;
+		const {value, markers, map, maps} = this.state;
+		// Create new marker for the location
+		let marker = marker = new maps.Marker({
+			position: {lat: this.state.lat, lng: this.state.lng},
+			map,
+			key: Date.now(),
+			name: value,
+		});
+		// We copy the current markers state and
+		// replace it with the new updated one
+		const newMarkersArray = [...markers];
+		newMarkersArray.push(marker);
 		this.setState({
-			locations: [
-				{
-					key: Date.now(),
-					name: value,
-					position: {
-						lat: this.state.lat,
-						lng: this.state.lng,
-					},
-				},
-				...locations,
-			],
+			markers: newMarkersArray,
 			value: '',
 			inputModalOpen: false,
 		});
@@ -208,10 +199,7 @@ class MapContainer extends Component {
 
 	// Modal for saving a location
 	inputModal = () => {
-		const {
-			inputModalOpen,
-			value,
-		} = this.state;
+		const {inputModalOpen, value} = this.state;
 		return (
 		<div>
 			<Modal
@@ -225,7 +213,8 @@ class MapContainer extends Component {
 						<input type="text"
 							className="name-input"
 							name="value" value={value}
-							onChange={this.handleChange} />
+							onChange={this.handleChange} 
+						/>
 					</label>
 					<input type="submit" className="save-button" value="Spara" />
 				</form>
@@ -237,9 +226,9 @@ class MapContainer extends Component {
 
     render() {
 		// We filter out the locations based on the search input
-		let locationsToRender = this.state.locations
-			.filter((location) =>
-				location.name.toLowerCase().includes(
+		let locationsToRender = this.state.markers
+			.filter((marker) =>
+				marker.name.toLowerCase().includes(
 				this.state.filterString.toLowerCase())
 			);
 		return (

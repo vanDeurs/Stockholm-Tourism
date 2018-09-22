@@ -15,7 +15,6 @@ class MapContainer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-				showingInfoWindow: false,
 				markers: [],
 				infoWindow: null,
 
@@ -80,7 +79,6 @@ class MapContainer extends Component {
 
 	renderInfoWindow = (marker) => {
 		this.state.infoWindow.open(this.state.map, marker);
-		this.forceUpdate();
 	}
 
 	// Triggers when the user clicks on the location in the list

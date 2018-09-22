@@ -5,7 +5,7 @@ import './marker.css';
 export const InfoBox = ({text, visible}) => {
     if (visible) {
         return (
-            <div class="infoBox">
+            <div className="info-box">
                 <p>{text}</p>
             </div>
         );
@@ -18,7 +18,11 @@ export const Marker = ({text, onClick, infoBoxVisible}) => {
     return (
         <div>
             <InfoBox visible={infoBoxVisible} text={text}/>
-            <div onClick={() => onClick()} className="marker"><FaMapPin /></div>
+            <div
+                // onClick={() => onClick()}
+                className="marker">
+                <FaMapPin />
+            </div>
         </div>
     );
 };

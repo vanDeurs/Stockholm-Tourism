@@ -18,6 +18,7 @@ class MapContainer extends Component {
 		this.state = {
 				showingInfoWindow: false,
 				markers: [],
+				infoWindow: null,
 
 				inputModalOpen: false,
 				value: '',
@@ -54,7 +55,6 @@ class MapContainer extends Component {
 						yesIWantToUseGoogleMapApiInternals={true}
 						>
 						{this.renderMarkers()}
-						{this.renderInfoWindow()}
 					</GoogleMapReact>>
 				</div>
 			);
@@ -88,33 +88,25 @@ class MapContainer extends Component {
 		markers.map((marker) => {
 			return marker;
 		});
-		// this.state.showingInfoWindow
-		// 	? return (
-
-		// 	)
 	}
 
-	renderInfoWindow = () => {
-		if (this.state.showingInfoWindow) {
-			let infoWindow = new this.state.maps.InfoWindow({
-				// content: name,
-			});
-			return infoWindow;
-		}
+	renderInfoWindow = (marker) => {
+		this.state.infoWindow.open(this.state.map, marker);
 	}
 
 	// Triggers when the user clicks on the location in the list
-	pickLocation = (lat, lng, index) => {
+	pickLocation = (address) => {
 		this.setState({
 			center: {
-				lat,
-				lng,
+				lat: address.lat,
+				lng: address.lng,
 			},
 			zoom: 13,
 		}, () => {
 			// Clears the center and zoom state so we can re-click on the
 			// same last location
 			this.clearOptions();
+			this.renderInfoWindow(address);
 		});
 	}
 
@@ -196,6 +188,9 @@ class MapContainer extends Component {
 			key: Date.now(),
 			name: value,
 		});
+		let infoWindow = new maps.InfoWindow({
+			content: value,
+		});
 		// We copy the current markers state and
 		// replace it with the new updated one
 		const newMarkers = [...markers];
@@ -204,6 +199,7 @@ class MapContainer extends Component {
 			markers: newMarkers,
 			value: '',
 			inputModalOpen: false,
+			infoWindow,
 		});
 	}
 
@@ -253,7 +249,7 @@ class MapContainer extends Component {
 						}}/>
 						{/* List of filtered locations  */}
 						<List locations={locationsToRender}
-							pickLocation={(address, index) => this.pickLocation(address.lat, address.lng, index)}
+							pickLocation={(address) => this.pickLocation(address)}
 							deleteLocation={(key, address) => this.deleteLocation(key, address)}
 						/>
 					</div>

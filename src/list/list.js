@@ -7,14 +7,13 @@ import './list.css';
 class List extends Component {
 	// Render each saved location in the list-item component
   renderLocation(location, index) {
-			let addressPosition = location.position;
 			let key = location.key;
 			let name = location.name;
       return (
         <ListItem
           name={name ? name : 'Name'}
-					pickLocation={() => this.props.pickLocation(addressPosition, index)}
-					deleteLocation={() => this.props.deleteLocation(key, addressPosition)}
+					pickLocation={() => this.props.pickLocation(location, index)}
+					deleteLocation={() => this.props.deleteLocation(key, location)}
 					key={key}
         />
       );

@@ -54,6 +54,7 @@ class MapContainer extends Component {
 						yesIWantToUseGoogleMapApiInternals={true}
 						>
 						{this.renderMarkers()}
+						{this.renderInfoWindow()}
 					</GoogleMapReact>>
 				</div>
 			);
@@ -87,22 +88,29 @@ class MapContainer extends Component {
 		markers.map((marker) => {
 			return marker;
 		});
+		// this.state.showingInfoWindow
+		// 	? return (
+
+		// 	)
+	}
+
+	renderInfoWindow = () => {
+		if (this.state.showingInfoWindow) {
+			let infoWindow = new this.state.maps.InfoWindow({
+				// content: name,
+			});
+			return infoWindow;
+		}
 	}
 
 	// Triggers when the user clicks on the location in the list
 	pickLocation = (lat, lng, index) => {
-		// Here we clone the original array, modify the state for
-		// the clicked location, and then set the state again
-		// using the cloned array.
-		const newLocations = [...this.state.locations];
-		newLocations[index].showingInfoWindow = true;
 		this.setState({
 			center: {
 				lat,
 				lng,
 			},
 			zoom: 13,
-			locations: newLocations,
 		}, () => {
 			// Clears the center and zoom state so we can re-click on the
 			// same last location
@@ -182,16 +190,18 @@ class MapContainer extends Component {
 		// Create new marker for the location
 		let marker = marker = new maps.Marker({
 			position: {lat: this.state.lat, lng: this.state.lng},
+			lat: this.state.lat,
+			lng: this.state.lng,
 			map,
 			key: Date.now(),
 			name: value,
 		});
 		// We copy the current markers state and
 		// replace it with the new updated one
-		const newMarkersArray = [...markers];
-		newMarkersArray.push(marker);
+		const newMarkers = [...markers];
+		newMarkers.push(marker);
 		this.setState({
-			markers: newMarkersArray,
+			markers: newMarkers,
 			value: '',
 			inputModalOpen: false,
 		});

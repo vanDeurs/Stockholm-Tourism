@@ -3,11 +3,11 @@ import './Map.css';
 import googleApiKey from '.././config/keys';
 import GoogleMapReact from 'google-map-react';
 import PropTypes from 'prop-types';
-import {Map, InfoWindow, GoogleApiWrapper} from 'google-maps-react';
+import {Map, InfoWindow, GoogleApiWrapper, Marker} from 'google-maps-react';
 import List from '../list/list';
 import Modal from 'react-modal';
 import Filter from '../filter/filter';
-import {Marker} from '../marker/marker';
+// import {Marker} from '../marker/marker';
 // Bind modal to appElement (http://reactcommunity.org/react-modal/accessibility/)
 // For screen readers
 Modal.setAppElement('#root');
@@ -17,9 +17,10 @@ class MapContainer extends Component {
 		super(props);
 		this.state = {
 			showingInfoWindow: false,
-				activeMarker: {},
+				// activeMarker: {},
 				locations: [],
-				selectedPlace: {},
+				markers: [],
+				// selectedPlace: {},
 
 				inputModalOpen: false,
 				value: '',
@@ -33,15 +34,13 @@ class MapContainer extends Component {
 					lng: 18.063240,
 				},
 				zoom: 11,
+
+				map: null,
+				maps: null,
         };
 	}
 
-	// Init map
-	componentDidMount() {
-		this.loadMap();
-	}
-
-	// Load in the google maps. Called in componentDidMount
+	// Load in the google maps.
 	loadMap = () => {
 		if (this.props && this.props.google) {
 			// If google is available
@@ -52,14 +51,25 @@ class MapContainer extends Component {
 						center={this.state.center}
 						zoom={this.state.zoom}
 						onClick={this.onMapClicked}
-					>
-					{this.loadMarkers()}
-				</GoogleMapReact>
-			</div>
+						onGoogleApiLoaded={({map, maps}) => this.setMapState(map, maps)}
+						yesIWantToUseGoogleMapApiInternals={true}
+
+						
+						>
+						{this.renderMarkers()}
+					</GoogleMapReact>>
+				</div>
 			);
 		} else {
 			return alert('Google maps is not available at this moment.');
 		}
+	}
+
+	setMapState = (map, maps) => {
+		this.setState({
+			map,
+			maps,
+		});
 	}
 
 	openOrCloseInfoBox = () => {
@@ -72,30 +82,38 @@ class MapContainer extends Component {
 			});
 	}
 
-	// We search through all the saved locations and return their markers
-	loadMarkers = () => {
-		const {locations} = this.state;
-		return locations
-			.map((location, i) => {
-				return <Marker
-					lat={location.position.lat}
-					lng={location.position.lng}
-					key={i}
-					text={location.name}
-					infoBoxVisible={this.state.showingInfoWindow}
-					onClick={() => this.openOrCloseInfoBox()}
-				/>;
-		});
+	renderMarkers = () => {
+		const {map, maps, locations} = this.state;
+		if (!map || !maps) {
+			return;
+		}
+		let marker;
+		let markers = [];
+		for (let i = 0; i < locations.length; i++) {
+			marker = marker = new maps.Marker({
+				position: locations[i].position,
+				map,
+				// key: locations[i].key,
+			});
+			markers.push(marker);
+		}
+		return markers;
 	}
 
 	// Triggers when the user clicks on the location in the list
-	pickLocation = (lat, lng) => {
+	pickLocation = (lat, lng, index) => {
+		// Here we clone the original array, modify the state for
+		// the clicked location, and then set the state again
+		// using the cloned array.
+		const newLocations = [...this.state.locations];
+		newLocations[index].showingInfoWindow = true;
 		this.setState({
 			center: {
 				lat,
 				lng,
 			},
 			zoom: 13,
+			locations: newLocations,
 		}, () => {
 			// Clears the center and zoom state so we can re-click on the
 			// same last location
@@ -115,16 +133,10 @@ class MapContainer extends Component {
 		});
 	}
 
-	// Called when the user clicks a marker
-	onMarkerClick = (lat, lng, marker, props) => {
-		this.setState({
-			selectedPlace: props,
-			activeMarker: marker,
-			showingInfoWindow: true,
-		});
-	}
 	// Triggers when the user clicks on the map
-	onMapClicked = ({lat, lng}) => this.openInputModal(lat, lng);
+	onMapClicked = ({lat, lng}) => {
+		this.openInputModal(lat, lng);
+	}
 	// Is triggered in the onMapClicked functions,
 	// which runs when the user clicks on the map
 	openInputModal = (lat, lng) => {
@@ -146,14 +158,24 @@ class MapContainer extends Component {
 			showingInfoWindow: false,
 		});
 	}
-	// Deletes a saved location. Triggers when the user clicks the delete button.
-	deleteLocation = (key) => {
+	// Removed locaton from the location array. Triggers when the user
+	// clicks the delete button.
+	deleteLocation = (key, position) => {
+		console.log('Locations: ', this.state.locations);
 		let locations = this.state.locations.filter((locations) => {
 			return locations.key !== key;
 		});
 		this.setState({
 			locations,
 		});
+		this.removeMarkerFromMap(position);
+	}
+	removeMarkerFromMap = (markerPosition) => {
+		for (let i = 0; i < 10; i++) {
+			if (this.state.markers[i].key === markerPosition) {
+				return;
+			}
+		}
 	}
 	// Triggers when the user tries to close the info modal window
 	onCloseInputModal = () => {
@@ -166,7 +188,7 @@ class MapContainer extends Component {
 	// Triggers when the user saves the location in the modal
 	onSubmitModalForm = (event) => {
 		event.preventDefault();
-		const {locations, value} = this.state;
+		const {locations, value, markers} = this.state;
 		this.setState({
 			locations: [
 				{
@@ -185,7 +207,6 @@ class MapContainer extends Component {
 	}
 
 	// Modal for saving a location
-	// Has a name input and a save button
 	inputModal = () => {
 		const {
 			inputModalOpen,
@@ -223,7 +244,7 @@ class MapContainer extends Component {
 			);
 		return (
 			<div>
-				{/* We load the map */}
+				{/* Google maps */}
 				{this.loadMap()}
 				<div style={styles.listWrapper}>
 					<div className="items-search-wrapper">
@@ -233,8 +254,8 @@ class MapContainer extends Component {
 						}}/>
 						{/* List of filtered locations  */}
 						<List locations={locationsToRender}
-							pickLocation={(address) => this.pickLocation(address.lat, address.lng)}
-							deleteLocation={(key) => this.deleteLocation(key)}
+							pickLocation={(address, index) => this.pickLocation(address.lat, address.lng, index)}
+							deleteLocation={(key, address) => this.deleteLocation(key, address)}
 						/>
 					</div>
 				</div>

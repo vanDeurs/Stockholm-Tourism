@@ -240,7 +240,7 @@ class MapContainer extends Component {
 Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.5)';
 
 export default GoogleApiWrapper({
-	apiKey: (googleApiKey)
+	apiKey: (googleApiKey),
 })(MapContainer);
 // export default MapContainer;
 

@@ -10,5 +10,6 @@ module.exports = {
         "indent": 0,
         "no-tabs": 0,
         "no-invalid-this": 0,
+        "no-unused-vars": 0,
     }
 };

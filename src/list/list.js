@@ -6,24 +6,28 @@ import './list.css';
 
 class List extends Component {
 	// Render each saved location in the list-item component
-  renderLocation(location) {
+  renderLocation(location, index) {
 			let addressPosition = location.position;
 			let key = location.key;
 			let name = location.name;
       return (
         <ListItem
           name={name ? name : 'Name'}
-					pickLocation={() => this.props.pickLocation(addressPosition)}
-					deleteLocation={() => this.props.deleteLocation(key)}
+					pickLocation={() => this.props.pickLocation(addressPosition, index)}
+					deleteLocation={() => this.props.deleteLocation(key, addressPosition)}
 					key={key}
         />
       );
 	}
-	// Render the full list of saved locations
+  // Render the full list of saved locations
   renderResultList(locations) {
 		return (
 			<div className="locations-container">
-				{locations.map((location) => this.renderLocation(location))}
+        {locations.map((location, index) => {
+          return (
+            this.renderLocation(location, index)
+          );
+        })}
 			</div>
 		);
   }

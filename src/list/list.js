@@ -30,11 +30,21 @@ class List extends Component {
 			</div>
 		);
   }
+
+  renderEmptyListMessage = () => {
+    return (
+      <div className="empty-locations-list">
+        <p>Du har inga sparade platser</p>
+      </div>
+    );
+  }
     render() {
       return (
-				// Run the render function with the locations prop
         <div className="list-container">
-					{this.renderResultList(this.props.locations)}
+          {this.props.locations.length > 0
+            ? this.renderResultList(this.props.locations)
+            : this.renderEmptyListMessage()
+          }
         </div>
       );
     }

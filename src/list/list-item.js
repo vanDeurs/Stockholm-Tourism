@@ -25,7 +25,6 @@ export const ListItem = (props) => {
     );
 };
 
-// Proptypes
 ListItem.propTypes = {
 	name: PropTypes.string.isRequired,
 	pickLocation: PropTypes.func.isRequired,

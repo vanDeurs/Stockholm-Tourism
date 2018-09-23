@@ -8,7 +8,7 @@ class Filter extends Component {
       <div className="filter-container">
         <input className="filter-input"
           type="text"
-          placeholder="Sök efter sparade platser..."
+          placeholder="Sök bland sparade platser..."
           onKeyUp={(event) =>
             this.props.onTextChange(event.target.value)}/>
       </div>

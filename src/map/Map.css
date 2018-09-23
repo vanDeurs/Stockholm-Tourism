@@ -110,4 +110,28 @@
 
 }
 
+@media only screen and (max-width: 1150px) {
+    .information-box {
+        width: 17%;
+    }
+    .information-box p {
+        font-size: 13px;
+    }
+    .modal-content {
+        left: 36.5%;
+        right: 36.5%;
+        width: 27%;
+    }
+
+}
+
+@media only screen and (max-width: 750px) {
+    .information-box{
+        width: 20%;
+    }
+    .information-box p {
+        font-size: 12px;
+    }
+}
+
 

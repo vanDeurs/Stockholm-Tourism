@@ -32,10 +32,15 @@
 
 .place-name {
     font-size: 16px;
-    color: darkgray;
+    color: darkgrey;
     font-weight: 500;
     cursor: pointer;
     text-align: start;
+}
+
+.place-name:hover {
+    color: grey;
+
 }
 
 .delete-button {
@@ -53,7 +58,7 @@
 }
 
 .location-icon {
-    color: gold;
+    color: red;
     font-size: 1.5em;
 }
 

@@ -11,7 +11,7 @@ class List extends Component {
 			let name = location.name;
       return (
         <ListItem
-          name={name ? name : 'Name'}
+          name={name ? name : 'Undefined name'}
 					pickLocation={() => this.props.pickLocation(location)}
 					deleteLocation={() => this.props.deleteLocation(key)}
 					key={key}

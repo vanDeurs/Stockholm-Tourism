@@ -25,12 +25,6 @@ class MapContainer extends Component {
 				lat: '',
 				lng: '',
 
-				center: {
-					lat: 59.334591,
-					lng: 18.063240,
-				},
-				zoom: 11,
-
 				map: null,
 				maps: null,
         };
@@ -44,8 +38,8 @@ class MapContainer extends Component {
 				<div style={{height: '100vh', width: '100%'}}>
 					<GoogleMapReact
 						bootstrapURLKeys={{key: googleApiKey}}
-						center={this.state.center}
-						zoom={this.state.zoom}
+						center={this.props.center}
+						zoom={this.props.zoom}
 						onClick={this.onMapClicked}
 						// Sets the map and maps instance in state,
 						// so we can more easily use it in other places
@@ -61,12 +55,14 @@ class MapContainer extends Component {
 		}
 	}
 
+	// Is called when the google api has loaded in
 	setMapState = (map, maps) => {
 		this.setState({
 			map,
 			maps,
 		});
 	}
+	// Called in loadMap function
 	renderMarkers = () => {
 		const {map, maps, markers} = this.state;
 		if (!map || !maps) {
@@ -77,37 +73,19 @@ class MapContainer extends Component {
 		});
 	}
 
+	// Is called in the pickLocation function, which is called when a user clicks
+	// on a location in the list
 	renderInfoWindow = (marker) => {
 		this.state.infoWindow.setContent(marker.name);
 		this.state.infoWindow.open(this.state.map, marker);
 	}
 
-	// Triggers when the user clicks on the location in the list
-	pickLocation = (address) => {
-		this.setState({
-			center: {
-				lat: address.lat,
-				lng: address.lng,
-			},
-			zoom: 13,
-		}, () => {
-			// Clears the center and zoom state so we can re-click on the
-			// same last location
-			this.clearOptions();
-			this.renderInfoWindow(address);
-		});
-	}
+	// Called when the user clicks on a location im the list
+	pickLocation = (marker) => {
+		this.state.map.panTo(marker.getPosition());
+		this.state.map.setZoom(13);
 
-	// Triggers in a callback after the user has clicked on a
-	// location from the map.
-	clearOptions = () => {
-		this.setState({
-			center: {
-				lat: null,
-				lng: null,
-			},
-			zoom: null,
-		});
+		this.renderInfoWindow(marker);
 	}
 
 	// Triggers when the user clicks on the map
@@ -124,13 +102,13 @@ class MapContainer extends Component {
 		});
 	}
 	// Removes marker from the marker array in state. Triggers when the user
-	// clicks the delete button.
+	// clicks the delete button on a location.
 	deleteLocation = (key) => {
-		let markers = this.state.markers.filter((marker) => {
+		let updatedMarkers = this.state.markers.filter((marker) => {
 			return marker.key !== key;
 		});
 		this.setState({
-			markers,
+			markers: updatedMarkers,
 		});
 		this.removeMarkerFromMap(key);
 	}
@@ -157,13 +135,14 @@ class MapContainer extends Component {
 		const {value, markers, map, maps, lat, lng} = this.state;
 		// Create new marker for the location
 		let dateKey = Date.now();
-		let marker = marker = new maps.Marker({
+		let marker = new maps.Marker({
 			position: {lat, lng},
 			lat,
 			lng,
 			map,
 			key: dateKey,
 			name: value,
+			title: value,
 		});
 		let infoWindow = new maps.InfoWindow();
 		// // We copy the current markers state and
@@ -235,24 +214,25 @@ class MapContainer extends Component {
 	};
 }
 
+// Overlay when modal is open
 Modal.defaultStyles.overlay.backgroundColor = 'rgba(200,200,200,.5)';
 
 export default GoogleApiWrapper({
 	apiKey: (googleApiKey),
 })(MapContainer);
-// export default MapContainer;
 
 // Proptypes
 MapContainer.propTypes = {
 	google: PropTypes.object,
-  zoom: PropTypes.number,
-  initialCenter: PropTypes.object,
+	zoom: PropTypes.number,
+	center: PropTypes.object,
 };
 
 MapContainer.defaultProps = {
   // Stockholm
-  initialCenter: {
+  center: {
     lat: 59.334591,
     lng: 18.063240,
   },
+  zoom: 11,
 };

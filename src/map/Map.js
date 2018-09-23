@@ -78,6 +78,7 @@ class MapContainer extends Component {
 	}
 
 	renderInfoWindow = (marker) => {
+		this.state.infoWindow.setContent(marker.name);
 		this.state.infoWindow.open(this.state.map, marker);
 	}
 
@@ -153,21 +154,20 @@ class MapContainer extends Component {
 	// Triggers when the user saves the location in the modal
 	onSubmitModalForm = (event) => {
 		event.preventDefault();
-		const {value, markers, map, maps} = this.state;
+		const {value, markers, map, maps, lat, lng} = this.state;
 		// Create new marker for the location
+		let dateKey = Date.now();
 		let marker = marker = new maps.Marker({
-			position: {lat: this.state.lat, lng: this.state.lng},
-			lat: this.state.lat,
-			lng: this.state.lng,
+			position: {lat, lng},
+			lat,
+			lng,
 			map,
-			key: Date.now(),
+			key: dateKey,
 			name: value,
 		});
-		let infoWindow = new maps.InfoWindow({
-			content: value,
-		});
-		// We copy the current markers state and
-		// replace it with the new updated one
+		let infoWindow = new maps.InfoWindow();
+		// // We copy the current markers state and
+		// // replace it with the new updated one
 		const newMarkers = [...markers];
 		newMarkers.push(marker);
 		this.setState({

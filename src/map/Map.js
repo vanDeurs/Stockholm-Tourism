@@ -205,7 +205,7 @@ class MapContainer extends Component {
 						}}/>
 						<List locations={locationsToRender}
 							pickLocation={(address) => this.pickLocation(address)}
-							deleteLocation={(key, address) => this.deleteLocation(key, address)}
+							deleteLocation={(key) => this.deleteLocation(key)}
 						/>
 					</div>
 				{this.inputModal()}

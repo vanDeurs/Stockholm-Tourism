@@ -6,14 +6,14 @@ import './list.css';
 
 class List extends Component {
 	// Render each saved location in the list-item component
-  renderLocation(location, index) {
+  renderLocation(location) {
 			let key = location.key;
 			let name = location.name;
       return (
         <ListItem
           name={name ? name : 'Name'}
-					pickLocation={() => this.props.pickLocation(location, index)}
-					deleteLocation={() => this.props.deleteLocation(key, location)}
+					pickLocation={() => this.props.pickLocation(location)}
+					deleteLocation={() => this.props.deleteLocation(key)}
 					key={key}
         />
       );
@@ -22,9 +22,9 @@ class List extends Component {
   renderResultList(locations) {
 		return (
 			<div className="locations-container">
-        {locations.map((location, index) => {
+        {locations.map((location) => {
           return (
-            this.renderLocation(location, index)
+            this.renderLocation(location)
           );
         })}
 			</div>
